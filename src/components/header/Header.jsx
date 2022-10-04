@@ -1,11 +1,27 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, Navigate } from 'react-router-dom'
 import { AppBar, Button, Toolbar } from '@mui/material'
 import { Box } from '@mui/system'
 
+import * as ROUTES from '../../constants/routes'
+import { logout } from '../../features/authSlice/authSlice'
+
 const Header = () => {
+	const dispatch = useDispatch()
+
 	const { isLoggedIn } = useSelector(state => state.auth)
+
+	const handleLogout = () => {
+		console.log('handleLogout')
+		dispatch(logout())
+	}
+
+	const hadndleChangePassword = () => {
+		console.log('hadndleChangePassword')
+	}
+
 	return (
 		<Box
 			sx={{
@@ -20,10 +36,20 @@ const Header = () => {
 						}}
 					>
 						<Box>
-							<Button LinkComponent={Link} to='/login' color='inherit'>
+							<Button
+								LinkComponent={Link}
+								to={ROUTES.SIGN_IN}
+								color='inherit'
+								onClick={handleLogout}
+							>
 								Logout
 							</Button>
-							<Button LinkComponent={Link} to='/change_password' color='inherit'>
+							<Button
+								LinkComponent={Link}
+								to={ROUTES.CHANGE_PASSWORD}
+								color='inherit'
+								onClick={hadndleChangePassword}
+							>
 								Change password
 							</Button>
 						</Box>
@@ -35,11 +61,11 @@ const Header = () => {
 						}}
 					>
 						<Box>
-							<Button LinkComponent={Link} to='/login' color='inherit'>
+							<Button LinkComponent={Link} to={ROUTES.SIGN_IN} color='inherit'>
 								Sign in
 							</Button>
 
-							<Button LinkComponent={Link} to='/registration' color='inherit'>
+							<Button LinkComponent={Link} to={ROUTES.SIGN_UP} color='inherit'>
 								Sign up
 							</Button>
 						</Box>

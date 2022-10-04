@@ -1,53 +1,99 @@
-import React from 'react'
-import { Button, CircularProgress, Grid, Link } from '@mui/material'
+import React, { useRef, useState } from 'react'
+import { Grid, Link } from '@mui/material'
 import { Box } from '@mui/system'
 
-import {
-	LOGIN,
-	REGISTRATION,
-	SIGN_IN,
-	SIGN_UP,
-	TEXT_TO_SIGN_IN,
-	TEXT_TO_SIGN_UP,
-} from '../../utils/constants/constants'
-import Input from '../common/inputs/Input'
+import * as CONSTATNT from '../../constants/constants'
+import * as ROUTES from '../../constants/routes'
+import Button from '../common/buttons/Button'
+import TextField from '../common/inputs/TextField'
 
-export default props => {
-	const { form, handleLogin, handleRegister, loading } = props
+export default ({ form, handleLogin, handleRegister, isLoading }) => {
+	const [info, setInfo] = useState({
+		email: '',
+		password: '',
+		passwordConfirm: '',
+	})
+	const ref = useRef()
 
-	const isRegistration = form === REGISTRATION
+	const { email, password, passwordConfirm } = info
 
-	const textFormLink = isRegistration ? TEXT_TO_SIGN_IN : TEXT_TO_SIGN_UP
-	const textButton = isRegistration ? SIGN_UP : SIGN_IN
-	const linkToPage = isRegistration ? LOGIN : REGISTRATION
+	const isRegistration = form === CONSTATNT.REGISTRATION
+
+	const textFormLink = isRegistration ? CONSTATNT.TEXT_TO_SIGN_IN : CONSTATNT.TEXT_TO_SIGN_UP
+	const textButton = isRegistration ? CONSTATNT.SIGN_UP : CONSTATNT.SIGN_IN
+	const linkToPage = isRegistration ? ROUTES.SIGN_IN : ROUTES.SIGN_UP
+
+	const handleChangeInfo = e => setInfo({ ...info, [e.target.name]: e.target.value })
+
+	const handleSubmit = event => {
+		event.preventDefault()
+
+		if (isRegistration && password !== passwordConfirm) return
+
+		return Boolean(handleLogin)
+			? handleLogin({ email, password })
+			: handleRegister({ email, password })
+	}
 
 	return (
-		<Box component='form' noValidate sx={{ mt: 2 }} handle={handleLogin && handleRegister}>
-			<Input form={form} isRegistration={isRegistration} />
-			<Button
-				sx={{ mt: 3, mb: 2 }}
-				disabled={loading}
-				type='sumbit'
-				variant='contained'
-				onClick={e => {
-					e.preventDefault()
-					console.log('1')
-					{
-						handleRegister()
-					}
-				}}
-			>
-				{loading && <CircularProgress size={24.5} />}
-				{!loading && <span>{textButton}</span>}
-			</Button>
+		<Box sx={{ mt: 2 }}>
+			<form onSubmit={handleSubmit}>
+				<Grid container spacing={2}>
+					<Grid item xs={12}>
+						<TextField
+							required
+							fullWidth
+							label='Email adress'
+							type='text'
+							name='email'
+							onChange={handleChangeInfo}
+						/>
+					</Grid>
 
-			<Grid container justifyContent='flex-end'>
-				<Grid item>
-					<Link href={`/${linkToPage}`} variant='body2'>
-						{textFormLink}
-					</Link>
+					<Grid item xs={12}>
+						<TextField
+							required
+							fullWidth
+							label='Password'
+							type='password'
+							name='password'
+							onChange={handleChangeInfo}
+						/>
+					</Grid>
+
+					{isRegistration && (
+						<Grid item xs={12}>
+							<TextField
+								required
+								fullWidth
+								label='Password confirmation'
+								type='password'
+								name='passwordConfirm'
+								onChange={handleChangeInfo}
+							/>
+						</Grid>
+					)}
 				</Grid>
-			</Grid>
+
+				<Button
+					ref={ref}
+					fullWidth
+					type='submit'
+					variant='contained'
+					loading={isLoading}
+					sx={{ mt: 3, mb: 2 }}
+				>
+					{textButton}
+				</Button>
+
+				<Grid container justifyContent='flex-end'>
+					<Grid item>
+						<Link href={linkToPage} variant='body2'>
+							{textFormLink}
+						</Link>
+					</Grid>
+				</Grid>
+			</form>
 		</Box>
 	)
 }

@@ -1,19 +1,12 @@
 import React, { memo } from 'react'
-import { Button as MuiButton } from '@mui/material'
+import { Button as MuiButton, CircularProgress } from '@mui/material'
 
-const Button = ({ children, loading, type, sx, variant, handle }) => {
+const Button = React.forwardRef(({ children, loading, ...otherProps }, ref) => {
 	return (
-		<MuiButton
-			sx={sx}
-			fullWidth
-			type={type}
-			onClick={handle}
-			variant={variant}
-			disabled={loading}
-		>
-			{children}
+		<MuiButton ref={ref} {...otherProps}>
+			{loading ? <CircularProgress color='primary' size={24} /> : <span>{children}</span>}
 		</MuiButton>
 	)
-}
+})
 
 export default memo(Button)

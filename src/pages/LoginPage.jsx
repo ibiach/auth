@@ -1,37 +1,43 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import { LockOpenOutlined } from '@mui/icons-material'
+import { Alert } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import Typography from '@mui/material/Typography'
 
+import Box from '../components/common/box/Box'
+import { auth } from '../components/firebase/firebase'
 import UserForm from '../components/form/UserForm'
-import { login } from '../store/slices/authSlice'
+import { SIGN_IN } from '../constants/constants'
 
-export default function SignIn() {
-	const [loading, setLoading] = useState(false)
+const SignIn = () => {
+	const [isLoading, setLoading] = useState(false)
+	const [isLoggedIn, setLoggedIn] = useState(false)
+	const [successful, setSuccessful] = useState(false)
+	const [message, setMessage] = useState('')
 
-	const { email } = useSelector(state => state.user)
-	const { password } = useSelector(state => state.user)
-	const { isLoggedIn } = useSelector(state => state.auth)
-
-	const dispatch = useDispatch()
-
-	const handleLogin = () => {
+	const handleLogin = ({ email, password }) => {
 		setLoading(true)
-
-		dispatch(login(email, login))
-			.unwrap()
-			.then(() => {
+		auth.signInWithEmailAndPassword(email, password)
+			.then(userCredential => {
 				console.log(email, password)
-				props.history.push('/home')
-				window.location.reload()
-			})
-			.catch(() => {
+				const user = userCredential.user
+
 				setLoading(false)
+				setLoggedIn(true)
+				setSuccessful(true)
+				setMessage('Logged in')
+
+				console.log('Singed in user: ', user)
+			})
+			.catch(error => {
+				setLoading(false)
+				setMessage('Something goes wrong...')
+				const errorCode = error.code
+				const errorMessage = error.message
+				console.log('An error occured: ', errorCode, errorMessage)
 			})
 	}
 
@@ -40,26 +46,22 @@ export default function SignIn() {
 	}
 
 	return (
-		<Container component='main' maxWidth='xs'>
+		<Container component='main' maxWidth='lg'>
 			<CssBaseline />
-			<Box
-				sx={{
-					marginTop: 8,
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-				}}
-			>
+			<Box>
 				<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-					<LockOutlinedIcon />
+					<LockOpenOutlined />
 				</Avatar>
 
 				<Typography component='h1' variant='h5'>
-					Sign in
+					{SIGN_IN}
 				</Typography>
 
-				<UserForm form='login' handleLogin={handleLogin} loading={loading} />
+				<UserForm form='login' handleLogin={handleLogin} isLoading={isLoading} />
+				{message && <Alert severity={successful ? 'success' : 'error'}>{message}</Alert>}
 			</Box>
 		</Container>
 	)
 }
+
+export default SignIn

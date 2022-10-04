@@ -1,14 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import app, { auth } from '../../components/firebase/firebase'
 import AuthService from '../../service/auth.service'
 
-const user = JSON.parse(localStorage.getItem('user'))
+const user = localStorage.getItem('user')
 
 export const register = createAsyncThunk('auth/register', async ({ email, password }, thunkAPI) => {
-	console.log(email, password)
 	try {
-		const response = await AuthService.register(email, password)
-		return response.data
+		AuthService.register(email, password)
 	} catch (error) {
 		return thunkAPI.rejectWithValue()
 	}
@@ -16,15 +15,14 @@ export const register = createAsyncThunk('auth/register', async ({ email, passwo
 
 export const login = createAsyncThunk('auth/login', async ({ email, password }, thunkAPI) => {
 	try {
-		const data = await AuthService.login(email, password)
-		return { user: data }
+		return AuthService.login(email, password)
 	} catch (error) {
 		return thunkAPI.rejectWithValue()
 	}
 })
 
 export const logout = createAsyncThunk('auth/logout', async () => {
-	await AuthService.logout()
+	AuthService.logout()
 })
 
 const initialState = user ? { isLoggedIn: true, user } : { isLoggedIn: false, user: null }
@@ -54,5 +52,4 @@ const authSlice = createSlice({
 	},
 })
 
-const { reducer } = authSlice
-export default reducer
+export default authSlice.reducer

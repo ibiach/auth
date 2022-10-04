@@ -4,27 +4,26 @@ import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import Typography from '@mui/material/Typography'
 
+const sxBox = {
+	display: 'flex',
+	flexDirection: 'column',
+	position: 'absolute',
+	left: 0,
+	bottom: -70,
+	width: '100%',
+}
+
+const sxBoxBox = {
+	py: 3,
+	px: 2,
+	mt: 'auto',
+}
+
 export default function StickyFooter() {
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				position: 'absolute',
-				left: 0,
-				bottom: 0,
-				width: '100%',
-			}}
-		>
+		<Box sx={sxBox}>
 			<CssBaseline />
-			<Box
-				component='footer'
-				sx={{
-					py: 3,
-					px: 2,
-					mt: 'auto',
-				}}
-			>
+			<Box component='footer' sx={sxBoxBox}>
 				<Container maxWidth='sm'>
 					<Typography variant='body1' align='center'>
 						IBIACH

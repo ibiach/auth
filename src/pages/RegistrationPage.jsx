@@ -1,65 +1,69 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { Alert } from '@mui/material'
-import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
+import { LockOutlined } from '@mui/icons-material'
+import { Alert, Avatar } from '@mui/material'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import Typography from '@mui/material/Typography'
 
+import Box from '../components/common/box/Box'
+import { auth } from '../components/firebase/firebase'
 import UserForm from '../components/form/UserForm'
-import { register } from '../store/slices/authSlice'
+import { SIGN_UP } from '../constants/constants'
 
-export default function SignUp() {
+const SignUp = () => {
+	const [isLoading, setLoading] = useState(false)
 	const [successful, setSuccessful] = useState(false)
+	const [message, setMessage] = useState('')
 
-	const dispatch = useDispatch()
+	const handleRegister = ({ email, password }) => {
+		setLoading(true)
+		auth.createUserWithEmailAndPassword(email, password)
+			.then(userCredential => {
+				const user = userCredential.user
 
-	const { email } = useSelector(state => state.user)
-	const { password } = useSelector(state => state.user)
-	const { repeatPassword } = useSelector(state => state.user)
+				setLoading(false)
+				setSuccessful(true)
+				setMessage('Registred')
 
-	console.log(password)
-
-	const handleRegister = () => {
-		setSuccessful(false)
-
-		if (password === repeatPassword) {
-			dispatch(register({ email, password }))
-				.unwrap()
-				.then(() => {
-					console.log(email, password)
-					setSuccessful(true)
-				})
-				.catch(() => {
-					setSuccessful(false)
-				})
-		}
+				console.log('Registered user: ', user)
+			})
+			.catch(error => {
+				setLoading(false)
+				setMessage('Something goes wrong...')
+				const errorCode = error.code
+				const errorMessage = error.message
+				console.log('Error ocured: ', errorCode, errorMessage)
+			})
 	}
+
+	useEffect(() => {
+		const timerId = setTimeout(() => setMessage(''), 3000)
+
+		return () => clearTimeout(timerId)
+	}, [message])
 
 	return (
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
-			<Box
-				sx={{
-					marginTop: 8,
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-				}}
-			>
+			<Box>
 				<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-					<LockOutlinedIcon />
+					<LockOutlined />
 				</Avatar>
 
 				<Typography component='h1' variant='h5'>
-					Sign up
+					{SIGN_UP}
 				</Typography>
-				<UserForm form='registration' handleRegister={handleRegister} />
+
+				<UserForm
+					form='registration'
+					handleRegister={handleRegister}
+					isLoading={isLoading}
+				/>
 			</Box>
-			{/* {message && <Alert severity={successful ? 'success' : 'error'}>{message}</Alert>} */}
+			{message && <Alert severity={successful ? 'success' : 'error'}>{message}</Alert>}
 		</Container>
 	)
 }
+
+export default SignUp

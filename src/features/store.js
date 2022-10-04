@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { logger } from 'redux-logger'
 
-import authSlice from './slices/authSlice'
-import userSlice from './slices/userSlice'
+import authSlice from './authSlice/authSlice'
+import userSlice from './userSlice/userSlice'
 
 export const rootReducer = combineReducers({
 	user: userSlice,
@@ -11,5 +11,5 @@ export const rootReducer = combineReducers({
 
 export const store = configureStore({
 	reducer: rootReducer,
-	middleware: getDefaultMiddleware => getDefaultMiddleware(),
+	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger),
 })

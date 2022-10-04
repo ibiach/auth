@@ -8,19 +8,19 @@ import Typography from '@mui/material/Typography'
 
 import UserForm from '../components/form/UserForm'
 
-export default function SignUp() {
+const ChangePasswordPage = () => {
+	const sx = {
+		marginTop: 8,
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+	}
+
 	return (
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
-			<Box
-				sx={{
-					marginTop: 8,
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-				}}
-			>
-				<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+			<Box>
+				<Avatar sx={sx}>
 					<LockOutlinedIcon />
 				</Avatar>
 
@@ -28,8 +28,10 @@ export default function SignUp() {
 					Sign up
 				</Typography>
 
-				<UserForm form='registration' />
+				<UserForm form='change_password' />
 			</Box>
 		</Container>
 	)
 }
+
+export default ChangePasswordPage
