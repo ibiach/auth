@@ -1,21 +1,30 @@
-import React from 'react'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { AppBar, Button, Toolbar } from '@mui/material'
 import { Box } from '@mui/system'
 
+import { CHANGE_PASSWORD, LOGOUT, SIGN_IN, SIGN_UP } from '../../constants/constants'
 import * as ROUTES from '../../constants/routes'
-import { logout } from '../../features/authSlice/authSlice'
+import { saveUser } from '../../features/userSlice/userSlice'
+import { auth } from '../firebase/firebase'
 
-const Header = () => {
+const Header = ({}) => {
 	const dispatch = useDispatch()
 
-	const { isLoggedIn } = useSelector(state => state.auth)
+	const user = useSelector(state => state.user.email)
+
+	useEffect(() => {
+		console.log(user)
+	}, [user])
 
 	const handleLogout = () => {
-		console.log('handleLogout')
-		dispatch(logout())
+		auth.signOut()
+			.then(() => {
+				console.log('User sign out')
+				dispatch(saveUser(undefined))
+			})
+			.catch(error => console.log(error))
 	}
 
 	const hadndleChangePassword = () => {
@@ -23,54 +32,29 @@ const Header = () => {
 	}
 
 	return (
-		<Box
-			sx={{
-				flexGrow: 3,
-			}}
-		>
+		<Box sx={{ flexGrow: 3 }}>
 			<AppBar position='static'>
-				{isLoggedIn ? (
-					<Toolbar
-						sx={{
-							justifyContent: 'flex-end',
-						}}
-					>
-						<Box>
-							<Button
-								LinkComponent={Link}
-								to={ROUTES.SIGN_IN}
-								color='inherit'
-								onClick={handleLogout}
-							>
-								Logout
-							</Button>
-							<Button
-								LinkComponent={Link}
-								to={ROUTES.CHANGE_PASSWORD}
-								color='inherit'
-								onClick={hadndleChangePassword}
-							>
-								Change password
-							</Button>
-						</Box>
-					</Toolbar>
-				) : (
-					<Toolbar
-						sx={{
-							justifyContent: 'flex-end',
-						}}
-					>
-						<Box>
-							<Button LinkComponent={Link} to={ROUTES.SIGN_IN} color='inherit'>
-								Sign in
-							</Button>
+				<Toolbar sx={{ justifyContent: 'flex-end' }}>
+					<Box>
+						<Button
+							LinkComponent={Link}
+							to={user ? ROUTES.LANDING : ROUTES.SIGN_IN}
+							color='inherit'
+							onClick={handleLogout}
+						>
+							{user ? LOGOUT : SIGN_IN}
+						</Button>
 
-							<Button LinkComponent={Link} to={ROUTES.SIGN_UP} color='inherit'>
-								Sign up
-							</Button>
-						</Box>
-					</Toolbar>
-				)}
+						<Button
+							LinkComponent={Link}
+							to={user ? ROUTES.CHANGE_PASSWORD : ROUTES.SIGN_UP}
+							color='inherit'
+							onClick={hadndleChangePassword}
+						>
+							{user ? CHANGE_PASSWORD : SIGN_UP}
+						</Button>
+					</Box>
+				</Toolbar>
 			</AppBar>
 		</Box>
 	)

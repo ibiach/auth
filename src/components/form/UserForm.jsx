@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { Grid, Link } from '@mui/material'
 import { Box } from '@mui/system'
+import { Formik } from 'formik'
+import * as yup from 'yup'
 
 import * as CONSTATNT from '../../constants/constants'
 import * as ROUTES from '../../constants/routes'
@@ -13,15 +15,16 @@ export default ({ form, handleLogin, handleRegister, isLoading }) => {
 		password: '',
 		passwordConfirm: '',
 	})
-	const ref = useRef()
 
-	const { email, password, passwordConfirm } = info
+	const ref = useRef()
 
 	const isRegistration = form === CONSTATNT.REGISTRATION
 
 	const textFormLink = isRegistration ? CONSTATNT.TEXT_TO_SIGN_IN : CONSTATNT.TEXT_TO_SIGN_UP
 	const textButton = isRegistration ? CONSTATNT.SIGN_UP : CONSTATNT.SIGN_IN
 	const linkToPage = isRegistration ? ROUTES.SIGN_IN : ROUTES.SIGN_UP
+
+	const { email, password, passwordConfirm } = info
 
 	const handleChangeInfo = e => setInfo({ ...info, [e.target.name]: e.target.value })
 
@@ -43,9 +46,10 @@ export default ({ form, handleLogin, handleRegister, isLoading }) => {
 						<TextField
 							required
 							fullWidth
-							label='Email adress'
-							type='text'
+							id='email'
 							name='email'
+							label='Email'
+							value={email}
 							onChange={handleChangeInfo}
 						/>
 					</Grid>
@@ -54,9 +58,11 @@ export default ({ form, handleLogin, handleRegister, isLoading }) => {
 						<TextField
 							required
 							fullWidth
+							id='password'
+							name='password'
 							label='Password'
 							type='password'
-							name='password'
+							value={password}
 							onChange={handleChangeInfo}
 						/>
 					</Grid>

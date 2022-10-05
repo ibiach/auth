@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import { LockOpenOutlined } from '@mui/icons-material'
 import { Alert } from '@mui/material'
@@ -11,6 +12,7 @@ import Box from '../components/common/box/Box'
 import { auth } from '../components/firebase/firebase'
 import UserForm from '../components/form/UserForm'
 import { SIGN_IN } from '../constants/constants'
+import { saveUser } from '../features/userSlice/userSlice'
 
 const SignIn = () => {
 	const [isLoading, setLoading] = useState(false)
@@ -18,12 +20,16 @@ const SignIn = () => {
 	const [successful, setSuccessful] = useState(false)
 	const [message, setMessage] = useState('')
 
+	const dispatch = useDispatch()
+
 	const handleLogin = ({ email, password }) => {
 		setLoading(true)
 		auth.signInWithEmailAndPassword(email, password)
 			.then(userCredential => {
 				console.log(email, password)
 				const user = userCredential.user
+
+				dispatch(saveUser(user.email))
 
 				setLoading(false)
 				setLoggedIn(true)

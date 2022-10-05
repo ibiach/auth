@@ -9,7 +9,7 @@ const sxBox = {
 	flexDirection: 'column',
 	position: 'absolute',
 	left: 0,
-	bottom: -70,
+	bottom: 0,
 	width: '100%',
 }
 
@@ -19,7 +19,7 @@ const sxBoxBox = {
 	mt: 'auto',
 }
 
-export default function StickyFooter() {
+const Footer = () => {
 	return (
 		<Box sx={sxBox}>
 			<CssBaseline />
@@ -33,3 +33,5 @@ export default function StickyFooter() {
 		</Box>
 	)
 }
+
+export default Footer

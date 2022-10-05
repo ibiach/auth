@@ -7,7 +7,7 @@ const userSlice = createSlice({
 	initialState,
 	reducers: {
 		saveUser: (state, action) => {
-			state.value = action.payload
+			state.email = action.payload
 		},
 	},
 })

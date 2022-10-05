@@ -7,7 +7,7 @@ const user = localStorage.getItem('user')
 
 export const register = createAsyncThunk('auth/register', async ({ email, password }, thunkAPI) => {
 	try {
-		AuthService.register(email, password)
+		return AuthService.register(email, password)
 	} catch (error) {
 		return thunkAPI.rejectWithValue()
 	}
