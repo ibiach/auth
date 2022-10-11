@@ -1,5 +1,6 @@
-import * as React from 'react'
+import React, { useState } from 'react'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import { Alert, Fade } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -10,6 +11,9 @@ import UserForm from '../components/form/UserForm'
 import { CHANGE_PASSWORD } from '../constants/constants'
 
 const ChangePasswordPage = () => {
+	const [successful, setSuccessful] = useState(false)
+	const [message, setMessage] = useState('')
+
 	return (
 		<Container component='main' maxWidth='xs'>
 			<CssBaseline />
@@ -24,6 +28,12 @@ const ChangePasswordPage = () => {
 
 				<UserForm form='change_password' />
 			</Box>
+
+			{message && (
+				<Fade in={Boolean(message)} timeout={{ enter: 1000, exit: 2000 }}>
+					<Alert severity={successful ? 'success' : 'error'}>{message}</Alert>
+				</Fade>
+			)}
 		</Container>
 	)
 }

@@ -5,7 +5,6 @@ import { Box } from '@mui/material'
 
 import { auth } from './components/firebase/firebase'
 import * as ROUTES from './constants/routes'
-import { saveUser } from './features/userSlice/userSlice'
 import Layout from './layout/Layout'
 import ChangePasswordPage from './pages/ChangePasswordPage'
 import HomePage from './pages/HomePage'
@@ -20,19 +19,17 @@ export const ProtectedRoute = ({ user, children, redirect = ROUTES.LANDING }) =>
 }
 
 const App = () => {
-	const user = useSelector(state => state.user.email)
+	const user = useSelector(state => state.auth.user)
 
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		auth.onAuthStateChanged(user => {
-			if (user) {
-				dispatch(saveUser(user.refreshToken))
-			} else {
-				dispatch(saveUser(undefined))
-			}
-		})
-	}, [auth, dispatch])
+		// auth.onAuthStateChanged(user => {
+		// 	if (!user) {
+		// 		dispatch(login(undefined))
+		// 	}
+		// })
+	}, [auth, dispatch, user])
 
 	return (
 		<Box>

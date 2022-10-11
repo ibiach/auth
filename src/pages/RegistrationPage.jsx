@@ -1,48 +1,37 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { LockOutlined } from '@mui/icons-material'
-import { Alert, Avatar } from '@mui/material'
+import { Alert, Avatar, Fade } from '@mui/material'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import Typography from '@mui/material/Typography'
 
 import Box from '../components/common/box/Box'
-import { auth } from '../components/firebase/firebase'
 import UserForm from '../components/form/UserForm'
 import { SIGN_UP } from '../constants/constants'
+import { register } from '../features/authSlice/authSlice'
 
 const SignUp = () => {
-	const [isLoading, setLoading] = useState(false)
-	const [successful, setSuccessful] = useState(false)
-	const [message, setMessage] = useState('')
+	const [showMessage, setShowMesage] = useState(false)
 
-	const handleRegister = ({ email, password }) => {
-		setLoading(true)
-		auth.createUserWithEmailAndPassword(email, password)
-			.then(userCredential => {
-				const user = userCredential.user
+	const message = useSelector(state => state.auth.options.message)
+	const isLoading = useSelector(state => state.auth.options.isLoading)
+	const successful = useSelector(state => state.auth.options.successful)
 
-				setLoading(false)
-				setSuccessful(true)
-				setMessage('Registred')
-
-				console.log('Registered user: ', user)
-			})
-			.catch(error => {
-				setLoading(false)
-				setMessage('Something goes wrong...')
-				const errorCode = error.code
-				const errorMessage = error.message
-				console.log('Error ocured: ', errorCode, errorMessage)
-			})
-	}
+	const dispatch = useDispatch()
 
 	useEffect(() => {
-		const timerId = setTimeout(() => setMessage(''), 3000)
+		if (message) {
+			setShowMesage(true)
+		}
 
-		return () => clearTimeout(timerId)
+		const timerMessage = setTimeout(() => setShowMesage(false), 4000)
+
+		return () => clearInterval(timerMessage)
 	}, [message])
+
+	const handleRegister = ({ email, password }) => dispatch(register({ email, password }))
 
 	return (
 		<Container component='main' maxWidth='xs'>
@@ -56,13 +45,12 @@ const SignUp = () => {
 					{SIGN_UP}
 				</Typography>
 
-				<UserForm
-					form='registration'
-					handleRegister={handleRegister}
-					isLoading={isLoading}
-				/>
+				<UserForm form='registration' handleRegister={handleRegister} isLoading={isLoading} />
 			</Box>
-			{message && <Alert severity={successful ? 'success' : 'error'}>{message}</Alert>}
+
+			<Fade in={Boolean(showMessage)} timeout={{ enter: 700, exit: 700 }}>
+				<Alert severity={successful ? 'success' : 'error'}>{message}</Alert>
+			</Fade>
 		</Container>
 	)
 }
