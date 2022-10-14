@@ -10,6 +10,8 @@ export const register = createAsyncThunk('auth/register', async ({ email, passwo
 			const user = userCredentials.user
 
 			console.log('Registered user: ', user)
+
+			return user.uid
 		})
 		.catch(error => {
 			const errorCode = error.code
@@ -40,49 +42,48 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }, 
 		})
 })
 
-export const logout = createAsyncThunk('auth/logout', async () => AuthService.logout())
+export const logout = createAsyncThunk('auth/logout', () => AuthService.logout())
 
 const initialState = user
-	? { isLoggedIn: true, user, options: { isLoading: false, message: '', successful: true } }
-	: { isLoggedIn: false, user: null, options: { isLoading: false, message: '', successful: false } }
+	? { user, isLoggedIn: true, isLoading: false }
+	: { user, isLoggedIn: false, isLoading: false }
 
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	extraReducers: {
 		[register.pending]: state => {
-			state.options = { ...state.options, isLoading: true }
+			state.isLoading = true
 		},
 		[register.fulfilled]: state => {
+			state.isLoading = false
 			state.isLoggedIn = false
-			state.options = { successful: true, isLoading: false, message: 'success signup' }
 		},
-		[register.rejected]: (state, action) => {
+		[register.rejected]: state => {
+			state.isLoading = false
 			state.isLoggedIn = false
-			state.options = { ...state.options, isLoading: false }
-			state.options = { ...state.options, successful: false, message: action.payload.errorMessage }
 		},
 		[login.pending]: state => {
-			state.options = { ...state.options, isLoading: true }
+			state.isLoading = true
 		},
 		[login.fulfilled]: (state, action) => {
+			state.isLoggedIn = true
+			state.isLoading = false
+			state.user = action.payload
+
 			localStorage.setItem('userUid', action.payload.uid)
 			localStorage.setItem('userEmail', action.payload.email)
-
-			state.isLoggedIn = true
-			state.user = action.payload
-			state.options = { ...state.options, isLoading: false }
 		},
-		[login.rejected]: (state, action) => {
-			state.isLoggedIn = false
+		[login.rejected]: state => {
 			state.user = null
-			state.options = { ...state.options, isLoading: false, message: action.payload.errorMessage }
+			state.isLoading = false
+			state.isLoggedIn = false
 		},
 		[logout.fulfilled]: state => {
-			localStorage.removeItem('userUid')
-
-			state.isLoggedIn = false
 			state.user = null
+			state.isLoggedIn = false
+
+			localStorage.removeItem('userUid')
 		},
 	},
 })

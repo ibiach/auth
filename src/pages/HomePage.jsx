@@ -1,14 +1,19 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { Typography } from '@mui/material'
-
-import Box from '../components/common/box/Box'
+import { Box, Typography } from '@mui/material'
 
 const HomePage = () => {
 	const user = localStorage.getItem('userEmail')
 
+
 	return (
-		<Box>
+		<Box
+			sx={{
+				marginTop: 10,
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+			}}
+		>
 			<Typography sx={{ fontSize: '3rem', align: 'center' }}>{`Hello, ${user}`}!</Typography>
 		</Box>
 	)

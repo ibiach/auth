@@ -26,7 +26,7 @@
 	"rules": {
 		"simple-import-sort/imports": "error",
 		"simple-import-sort/exports": "error",
-		"prettier/prettier": ["error", { "singleQuote": true, "printWidth": 120, "semi": false }],
+		"prettier/prettier": ["error", { "singleQuote": true, "printWidth": 100, "semi": false }],
 		"react/display-name": 0,
 		"react/prop-types": 0,
 		"no-unused-vars": "off"

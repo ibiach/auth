@@ -1,36 +1,22 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AppBar, Toolbar } from '@mui/material'
 import { Box } from '@mui/system'
 
-import { CHANGE_PASSWORD, LOGOUT, SIGN_IN, SIGN_UP } from '../../constants/constants'
 import * as ROUTES from '../../constants/routes'
 import { logout } from '../../features/authSlice/authSlice'
 import { Button } from '../common/buttons/Button'
-import { auth } from '../firebase/firebase'
 
-const Header = ({}) => {
+const Header = () => {
 	const dispatch = useDispatch()
 
 	const user = useSelector(state => state.auth.user)
 
-	useEffect(() => {
-		// console.log(user)
-	}, [user])
+	const navigate = useNavigate()
 
-	const handleLogout = () => {
-		auth.signOut()
-			.then(() => {
-				console.log('User sign out')
-				dispatch(logout(user))
-			})
-			.catch(error => console.log(error))
-	}
-
-	const handleChangePassword = () => {
-		console.log('hadndleChangePassword')
-	}
+	const handleLogout = () =>
+		dispatch(logout()).then(() => navigate(ROUTES.SIGN_IN, { replace: true }))
 
 	return (
 		<Box sx={{ flexGrow: 3 }}>
@@ -38,21 +24,20 @@ const Header = ({}) => {
 				<Toolbar sx={{ justifyContent: 'flex-end' }}>
 					<Box>
 						<Button
-							LinkComponent={Link}
-							to={user ? ROUTES.LANDING : ROUTES.SIGN_IN}
 							color='inherit'
-							onClick={handleLogout}
+							LinkComponent={Link}
+							to={!user ? ROUTES.SIGN_IN : null}
+							onClick={user ? handleLogout : null}
 						>
-							{user ? LOGOUT : SIGN_IN}
+							{user ? 'LOGOUT' : 'SIGN IN'}
 						</Button>
 
 						<Button
+							color='inherit'
 							LinkComponent={Link}
 							to={user ? ROUTES.CHANGE_PASSWORD : ROUTES.SIGN_UP}
-							color='inherit'
-							onClick={user ? handleChangePassword : null}
 						>
-							{user ? CHANGE_PASSWORD : SIGN_UP}
+							{user ? 'CHANGE PASSWORD' : 'SIGN UP'}
 						</Button>
 					</Box>
 				</Toolbar>
